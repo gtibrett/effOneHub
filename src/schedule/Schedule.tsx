@@ -1,4 +1,5 @@
-import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid';
+import {Box} from '@mui/material';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {useEffect, useState} from 'react';
 import Caxios from '../api/Caxios';
 import {getAPIUrl, mapSchedule} from '../api/Ergast';
@@ -32,7 +33,7 @@ export default function Schedule() {
 	
 	return (
 		<>
-			<RaceMap season={season} races={races}/>
+			<Box sx={{px: 2}}><RaceMap season={season} races={races}/></Box>
 			<DataGrid
 				sx={{mt: 2}}
 				rows={races}
@@ -71,19 +72,6 @@ export default function Schedule() {
 								return <ByLine id={row.Results.find(r => Number(r.position) === 1)?.Driver?.driverId}/>;
 							},
 							minWidth: 200
-						},
-						{
-							field: 'location',
-							headerName: 'Location',
-							type: 'string',
-							flex: .5,
-							renderCell: ({row}: GridCellParams<string, Race>) => {
-								const locality = row.Circuit?.Location?.locality;
-								const country  = row.Circuit?.Location?.country;
-								
-								return `${locality}, ${country}`;
-							},
-							minWidth: 175
 						}
 					] as GridColDef<Race>[]
 				}

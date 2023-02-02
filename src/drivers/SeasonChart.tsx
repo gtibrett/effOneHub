@@ -1,30 +1,29 @@
 import {Box} from '@mui/material';
-import {blueGrey} from '@mui/material/colors';
 import {ResponsiveLine, Serie as LineSerie} from '@nivo/line';
-import {getColorByConstructorId} from '../constructors';
 import {Race} from '../types/ergast';
+import {useGetChartColorsByConstructor, useNivoTheme} from '../ui-components/nivo';
 
 type SeasonChartProps = {
 	races: Race[];
 }
 
 export default function SeasonChart({races}: SeasonChartProps) {
+	const nivoTheme                   = useNivoTheme();
+	const getChartColorsByConstructor = useGetChartColorsByConstructor();
+	
 	if (!races?.[0]?.Results?.[0]) {
 		return null;
 	}
 	
-	const constructorId = races?.[0].Results?.[0].Constructor?.constructorId;
-	const color         = getColorByConstructorId(constructorId);
+	const colors = getChartColorsByConstructor(races?.[0].Results?.[0].Constructor?.constructorId);
 	
 	const qualifying: LineSerie = {
 		id: 'qualifying',
-		color: blueGrey[400],
 		data: []
 	};
 	
 	const results: LineSerie = {
 		id: 'results',
-		color: color,
 		data: []
 	};
 	
@@ -40,12 +39,12 @@ export default function SeasonChart({races}: SeasonChartProps) {
 		});
 	});
 	
-	
 	return (
 		<Box sx={{height: 132, width: '100%'}} aria-hidden>
 			<ResponsiveLine
-				data={[qualifying, results]}
-				colors={({color}) => color || 'transparent'}
+				theme={nivoTheme}
+				data={[results, qualifying]}
+				colors={colors}
 				yScale={{
 					type: 'linear',
 					min: 20,
@@ -65,7 +64,7 @@ export default function SeasonChart({races}: SeasonChartProps) {
 				margin={{top: 5, left: 5, right: 25, bottom: 32}}
 				legends={[
 					{
-						anchor: 'bottom',
+						anchor: 'bottom-left',
 						direction: 'row',
 						justify: false,
 						translateX: 0,

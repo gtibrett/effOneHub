@@ -1,8 +1,7 @@
 import {Box} from '@mui/material';
-import {blueGrey} from '@mui/material/colors';
 import {ResponsiveLine, Serie as LineSerie} from '@nivo/line';
-import {getColorByConstructorId} from './index';
 import {SeasonStanding} from '../types/ergast';
+import {NivoTooltip, useGetChartColorsByConstructor, useNivoTheme} from '../ui-components/nivo';
 import HistoryTooltip from './HistoryTooltip';
 
 type HistoryChartProps = {
@@ -19,28 +18,29 @@ const getTicks = (points: number) => {
 };
 
 export default function HistoryChart({seasons}: HistoryChartProps) {
+	const nivoTheme                   = useNivoTheme();
+	const getChartColorsByConstructor = useGetChartColorsByConstructor();
+	
 	if (!seasons.length) {
 		return null;
 	}
 	
 	const constructorId = seasons[0].ConstructorStandings?.[0]?.Constructors?.[0].constructorId;
-	const color         = getColorByConstructorId(constructorId);
+	
+	const colors = getChartColorsByConstructor(constructorId);
 	
 	const points: LineSerie = {
 		id: 'points',
-		color: blueGrey[400],
 		data: []
 	};
 	
 	const wins: LineSerie = {
 		id: 'wins',
-		color: blueGrey[200],
 		data: []
 	};
 	
 	const results: LineSerie = {
 		id: 'results',
-		color: color,
 		data: []
 	};
 	
@@ -95,8 +95,9 @@ export default function HistoryChart({seasons}: HistoryChartProps) {
 	return (
 		<Box sx={{height: 132, width: '100%'}} aria-hidden>
 			<ResponsiveLine
-				data={[points, results, wins]}
-				colors={({color}) => color || 'transparent'}
+				theme={nivoTheme}
+				data={[results, wins, points]}
+				colors={colors}
 				yScale={{
 					type: 'linear',
 					min: 0,
@@ -127,7 +128,7 @@ export default function HistoryChart({seasons}: HistoryChartProps) {
 						symbolShape: 'circle'
 					}
 				]}
-				tooltip={HistoryTooltip}
+				tooltip={NivoTooltip(HistoryTooltip)}
 			/>
 		</Box>
 	);

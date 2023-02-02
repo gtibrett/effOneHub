@@ -39,6 +39,9 @@ Connect to the DB for the API and run the following SQL
 CREATE INDEX races_year_round_idx ON races (year, round);
 CREATE INDEX races_circuit_idx ON races (circuitId);
 CREATE INDEX results_driver_idx ON results (driverId);
+CREATE INDEX results_driver_race_idx ON results (raceId, driverId);
+CREATE INDEX lapTimes_race_idx ON lapTimes (raceId);
+CREATE INDEX pitStops_race_lap_idx ON pitStops (raceId, lap);
 ```
 
 ## Development

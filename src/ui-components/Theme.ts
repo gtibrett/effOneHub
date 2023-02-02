@@ -1,5 +1,5 @@
 import type {} from '@mui/x-data-grid/themeAugmentation';
-import {createTheme, useMediaQuery, useTheme} from '@mui/material';
+import {alpha, createTheme, useMediaQuery, useTheme} from '@mui/material';
 import {blueGrey, deepOrange} from '@mui/material/colors';
 import {useMemo} from 'react';
 
@@ -10,10 +10,10 @@ export const useEffTheme = (overrideMode?: 'light' | 'dark') => {
 		palette: {
 			mode: prefersDarkMode ? 'dark' : 'light',
 			primary: {
-				main: blueGrey[800]
+				main: blueGrey[prefersDarkMode ? 400 : 800]
 			},
 			secondary: {
-				main: deepOrange[700]
+				main: deepOrange[prefersDarkMode ? 300 : 700]
 			},
 			background: {
 				paper: prefersDarkMode ? blueGrey[900] : '#FFFFFF',
@@ -41,12 +41,29 @@ export const useEffTheme = (overrideMode?: 'light' | 'dark') => {
 						}
 					}
 				}
+			},
+			MuiDialog: {
+				styleOverrides: {
+					paper: {
+						background: prefersDarkMode ? blueGrey[900] : '#FFFFFF'
+					}
+				}
+			},
+			MuiBackdrop: {
+				styleOverrides: {
+					root: {
+						background: alpha(blueGrey[prefersDarkMode? 700 : 600], .5),
+						backdropFilter: `blur(5px) grayscale(100%)`
+					}
+				}
 			}
 		}
 	}), [prefersDarkMode]);
 };
 
 export const useInvertedTheme = () => {
-	const theme = useTheme();
+	const theme = useEffTheme();
 	return useEffTheme(theme.palette.mode === 'light' ? 'dark' : 'light');
 };
+
+export const usePrefersDarkMode = () => useTheme().palette.mode === 'dark';

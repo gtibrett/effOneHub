@@ -8,6 +8,7 @@ import {getColorByConstructorId} from '../constructors';
 import ByLine from '../drivers/ByLine';
 import LapByLapTooltip from '../race/lapByLap/LapByLapTooltip';
 import {Race, Result} from '../types/ergast';
+import {NivoTooltip, useNivoTheme} from '../ui-components/nivo';
 
 type ChartSerie = {
 	id: string;
@@ -90,6 +91,7 @@ const useChartData = (races: Race[] | undefined) => {
 };
 
 export default function DriversChart() {
+	const nivoTheme         = useNivoTheme();
 	const height            = 250;
 	const [{season}]        = useAppState();
 	const [races, setRaces] = useState<Race[]>([]);
@@ -113,6 +115,7 @@ export default function DriversChart() {
 	return (
 		<Box height={height} width="100%" sx={{boxSizing: 'border-box'}} aria-hidden>
 			<ResponsiveBump
+				theme={nivoTheme}
 				data={data}
 				colors={({color}) => color || 'transparent'}
 				lineWidth={3}
@@ -138,7 +141,7 @@ export default function DriversChart() {
 					tickRotation: 0
 				}}
 				margin={{top: 0, right: 44, bottom: 24, left: 60}}
-				tooltip={LapByLapTooltip}
+				tooltip={NivoTooltip(LapByLapTooltip)}
 			/>
 		</Box>
 	);

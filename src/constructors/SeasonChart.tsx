@@ -1,32 +1,31 @@
 import {Box} from '@mui/material';
-import {blueGrey} from '@mui/material/colors';
 import {ResponsiveLine, Serie as LineSerie} from '@nivo/line';
-import {getColorByConstructorId} from './index';
 import {Race} from '../types/ergast';
+import {useGetChartColorsByConstructor, useNivoTheme} from '../ui-components/nivo';
 
 type SeasonChartProps = {
 	races: Race[];
 }
 
 export default function SeasonChart({races}: SeasonChartProps) {
+	const nivoTheme                   = useNivoTheme();
+	const getChartColorsByConstructor = useGetChartColorsByConstructor();
 	if (!races?.[0]?.Results?.[0]?.Driver || !races?.[0]?.Results?.[1]?.Driver) {
 		return null;
 	}
 	
 	const constructorId = races?.[0].Results?.[0].Constructor?.constructorId;
-	const color         = getColorByConstructorId(constructorId);
+	const colors        = getChartColorsByConstructor(constructorId);
 	
 	const driver1                = races[0].Results[0].Driver;
 	const driver2                = races[0].Results[1].Driver;
 	const driver1Data: LineSerie = {
 		id: driver1.code || '',
-		color: color,
 		data: []
 	};
 	
 	const driver2Data: LineSerie = {
 		id: driver2.code || '',
-		color: blueGrey[400],
 		data: []
 	};
 	
@@ -43,12 +42,12 @@ export default function SeasonChart({races}: SeasonChartProps) {
 		});
 	});
 	
-	
 	return (
 		<Box sx={{height: 132, width: '100%'}} aria-hidden>
 			<ResponsiveLine
+				theme={nivoTheme}
 				data={[driver1Data, driver2Data]}
-				colors={({color}) => color || 'transparent'}
+				colors={colors}
 				yScale={{
 					type: 'linear',
 					min: 20,

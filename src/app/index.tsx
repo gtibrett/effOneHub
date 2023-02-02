@@ -5,6 +5,7 @@ import ConstructorProvider from '../constructors/ConstructorProvider';
 import DriverProvider from '../drivers/DriverProvider';
 import {Driver, Home, Race} from '../pages';
 import About from '../pages/About';
+import Circuit from '../pages/Circuit';
 import Constructor from '../pages/Constructor';
 import Header from '../ui-components/Header';
 import {useEffTheme} from '../ui-components/Theme';
@@ -25,7 +26,7 @@ function Index() {
 								<Box sx={{position: 'fixed', overflow: 'auto', scrollbarColor: theme.palette.mode, top: 0, left: 0, right: 0, bottom: 0, background: theme.palette.background.default}}>
 									<Header/>
 									
-									<Container maxWidth="xl" component="main" sx={{py:2}}>
+									<Container maxWidth="xl" component="main" sx={{py: 2}}>
 										<ErrorBoundary>
 											<Routes>
 												<Route
@@ -35,6 +36,10 @@ function Index() {
 												<Route
 													element={<About/>}
 													path="/about"
+												/>
+												<Route
+													element={<Circuit/>}
+													path="/circuit/:circuitId"
 												/>
 												<Route
 													element={<Constructor/>}

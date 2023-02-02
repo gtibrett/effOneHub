@@ -1,8 +1,7 @@
-import {Box} from '@mui/material';
-import {blueGrey} from '@mui/material/colors';
+import {Paper} from '@mui/material';
 import {ResponsiveLine, Serie as LineSerie} from '@nivo/line';
-import {getColorByConstructorId} from '../constructors';
 import {SeasonStanding} from '../types/ergast';
+import {NivoTooltip, useGetChartColorsByConstructor, useNivoTheme} from '../ui-components/nivo';
 import CareerTooltip from './CareerTooltip';
 
 type CareerChartProps = {
@@ -19,29 +18,29 @@ const getTicks = (points: number) => {
 };
 
 export default function CareerChart({seasons}: CareerChartProps) {
+	const nivoTheme                   = useNivoTheme();
+	const getChartColorsByConstructor = useGetChartColorsByConstructor();
+	
 	if (!seasons.length) {
 		return null;
 	}
 	
 	const constructorId = seasons[seasons.length - 1].DriverStandings?.[0].Constructors?.[0]?.constructorId;
-	const color         = getColorByConstructorId(constructorId);
+	const colors        = getChartColorsByConstructor(constructorId);
 	const max           = Math.max(...seasons.map(s => Number(s.DriverStandings?.[0].position)));
 	
 	const points: LineSerie = {
-		id: 'points',
-		color: blueGrey[400],
+		id: 'Points',
 		data: []
 	};
 	
 	const wins: LineSerie = {
-		id: 'wins',
-		color: blueGrey[200],
+		id: 'Wins',
 		data: []
 	};
 	
 	const results: LineSerie = {
-		id: 'results',
-		color: color,
+		id: 'Results',
 		data: []
 	};
 	
@@ -94,10 +93,11 @@ export default function CareerChart({seasons}: CareerChartProps) {
 	
 	
 	return (
-		<Box sx={{height: 132, width: '100%'}} aria-hidden>
+		<Paper variant="outlined" sx={{height: 132, p: 1}} aria-hidden>
 			<ResponsiveLine
-				data={[points, results, wins]}
-				colors={({color}) => color || 'transparent'}
+				theme={nivoTheme}
+				data={[results, wins, points]}
+				colors={colors}
 				yScale={{
 					type: 'linear',
 					min: 0,
@@ -109,12 +109,13 @@ export default function CareerChart({seasons}: CareerChartProps) {
 				axisBottom={null}
 				enableGridX={false}
 				gridYValues={getTicks(maxPoints)}
-				margin={{top: 25, left: 8, right: 8, bottom: 32}}
+				margin={{top: 8, left: 8, right: 8, bottom: 36}}
 				useMesh={true}
 				crosshairType="x"
+				tooltip={NivoTooltip(CareerTooltip)}
 				legends={[
 					{
-						anchor: 'bottom',
+						anchor: 'bottom-left',
 						direction: 'row',
 						justify: false,
 						translateX: 0,
@@ -128,8 +129,7 @@ export default function CareerChart({seasons}: CareerChartProps) {
 						symbolShape: 'circle'
 					}
 				]}
-				tooltip={CareerTooltip}
 			/>
-		</Box>
+		</Paper>
 	);
 }

@@ -1,9 +1,10 @@
-import {Box, Skeleton} from '@mui/material';
-import {ResponsiveBar} from '@nivo/bar';
+import {Box, Skeleton, useMediaQuery, useTheme} from '@mui/material';
+import {BarSvgProps, ResponsiveBar} from '@nivo/bar';
 import {getColorByConstructorId} from '../../constructors';
 import ByLine from '../../drivers/ByLine';
 import {DriverId} from '../../drivers/DriverProvider';
 import {Result} from '../../types/ergast';
+import {NivoTooltip, useNivoTheme} from '../../ui-components/nivo';
 import {getDateFromTimeString} from '../lapTimes/helpers';
 import {PitStopTableRow} from './PitStops';
 import PitStopTooltip from './PitStopTooltip';
@@ -30,15 +31,19 @@ const getColorByDriverId = (driverId: DriverId, results: Result[]) => {
 
 
 export default function PitStopsChart({maxStops, pitStops, results}: PitStopsChartProps) {
+	const nivoTheme = useNivoTheme();
+	const theme     = useTheme();
+	const isSmall   = useMediaQuery(theme.breakpoints.down('sm'));
+	
 	if (!pitStops) {
-		return <Skeleton variant="rectangular" height={400}/>;
+		return <Skeleton variant="rectangular" height={isSmall ? 400 : 150}/>;
 	}
 	
 	if (!pitStops.length) {
 		return null;
 	}
 	
-	const baseTime = Date.UTC(2022, 0, 1, 0, 0, 0, 0);
+	const baseTime             = Date.UTC(2022, 0, 1, 0, 0, 0, 0);
 	const keys: string[]       = (new Array(maxStops).fill(null).map((v, i) => String(i + 1)));
 	const data: PitStopSerie[] = pitStops.map(p => {
 		const stop: PitStopSerie = {
@@ -54,33 +59,50 @@ export default function PitStopsChart({maxStops, pitStops, results}: PitStopsCha
 		return stop;
 	});
 	
-	console.log(keys, data);
+	const layoutProps: Partial<BarSvgProps<any>> = {};
+	if (isSmall) {
+		layoutProps.layout     = 'horizontal';
+		layoutProps.margin     = {left: 40};
+		layoutProps.axisBottom = null;
+		layoutProps.axisLeft   = {
+			tickSize: 0,
+			tickPadding: 5,
+			tickRotation: 0,
+			format: (v => {
+				return <ByLine variant="code" id={v}/>;
+			})
+		};
+	}
+	else {
+		layoutProps.layout     = 'vertical';
+		layoutProps.margin     = {bottom: 40};
+		layoutProps.axisBottom = {
+			tickSize: 0,
+			tickPadding: 5,
+			tickRotation: 0,
+			format: (v => {
+				return <ByLine variant="code" id={v}/>;
+			})
+		};
+		layoutProps.axisLeft   = null;
+	}
 	
 	return (
-		<Box height={150} aria-hidden marginBottom={2}>
+		<Box sx={{height: isSmall ? 400 : 150, mb: 2}} aria-hidden>
 			<ResponsiveBar
+				theme={nivoTheme}
 				indexBy="driverId"
 				keys={keys}
 				data={data}
-				// groupMode="grouped"
 				colors={({indexValue}) => {
 					return getColorByDriverId(String(indexValue || ''), results);
 				}}
 				enableLabel={false}
-				// enableGridX={false}
 				enableGridY={false}
 				padding={.1}
 				innerPadding={1.5}
-				tooltip={PitStopTooltip}
-				margin={{bottom: 40}}
-				axisBottom={{
-					tickSize: 0,
-					tickPadding: 5,
-					tickRotation: 0,
-					format: (v => {
-						return <ByLine variant="code" id={v}/>;
-					})
-				}}
+				tooltip={NivoTooltip(PitStopTooltip)}
+				{...layoutProps}
 			/>
 		</Box>
 	);

@@ -4,6 +4,7 @@ import {useMemo} from 'react';
 import {useNavigate} from 'react-router';
 import {feature} from 'topojson-client';
 import {Location, Race} from '../types/ergast';
+import {NivoTooltip, useNivoTheme} from '../ui-components/nivo';
 import {useInvertedTheme} from '../ui-components/Theme';
 
 const useLand = () => {
@@ -36,10 +37,12 @@ const Tooltip: GeoMapTooltip = ({feature}) => {
 	
 	const race: Race = feature.race;
 	
-	return <Box sx={sx}>
-		<Typography>{race.raceName}</Typography>
-		<Typography>{race.Circuit?.circuitName}</Typography>
-	</Box>;
+	return (
+		<Box sx={sx}>
+			<Typography>{race.raceName}</Typography>
+			<Typography>{race.Circuit?.circuitName}</Typography>
+		</Box>
+	);
 };
 
 type RaceMapProps = {
@@ -52,9 +55,10 @@ type RaceMapProps = {
 }
 
 export default function RaceMap({season, races, height = 300, width = 'auto', centerOn = {long: '0', lat: '0'}, zoom = false}: RaceMapProps) {
-	const theme    = useTheme();
-	const navigate = useNavigate();
-	const land     = useLand();
+	const nivoTheme = useNivoTheme();
+	const theme     = useTheme();
+	const navigate  = useNavigate();
+	const land      = useLand();
 	
 	const points = races.map((race) => ({
 		'type': 'Feature',
@@ -75,6 +79,7 @@ export default function RaceMap({season, races, height = 300, width = 'auto', ce
 	return (
 		<Box sx={{height, width}} aria-hidden>
 			<ResponsiveGeoMap
+				theme={nivoTheme}
 				features={[land, ...points]}
 				margin={{top: 0, right: 0, bottom: 0, left: 0}}
 				projectionType="equirectangular"
@@ -83,7 +88,7 @@ export default function RaceMap({season, races, height = 300, width = 'auto', ce
 				projectionScale={zoom ? 100 : 100}
 				borderWidth={0.5}
 				borderColor={theme.palette.primary.main}
-				tooltip={Tooltip}
+				tooltip={NivoTooltip(Tooltip)}
 				fillColor={(feature) => {
 					if (feature?.geometry?.type === 'Point') {
 						return theme.palette.secondary.main;

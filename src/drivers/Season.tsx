@@ -1,15 +1,13 @@
 import {Alert, Skeleton, Typography} from '@mui/material';
 import {visuallyHidden} from '@mui/utils';
 import {DataGrid, GridCellParams, GridColDef} from '@mui/x-data-grid';
-import {useEffect, useState} from 'react';
-import Caxios from '../api/Caxios';
-import {getAPIUrl, mapSchedule} from '../api/Ergast';
 import {useAppState} from '../app/AppStateProvider';
 import {getPositionTextOutcome} from '../helpers';
 import PositionChange from '../race/PositionChange';
 import {Race} from '../types/ergast';
 import Link from '../ui-components/Link';
 import {DriverId} from './DriverProvider';
+import {useRacesBySeason} from './hooks';
 import SeasonChart from './SeasonChart';
 
 type SeasonProps = {
@@ -17,16 +15,8 @@ type SeasonProps = {
 }
 
 export default function Season({driverId}: SeasonProps) {
-	const [{season}]        = useAppState();
-	const [races, setRaces] = useState<Race[] | undefined>();
-	
-	useEffect(() => {
-		const dataUrl = getAPIUrl(`/${season}/drivers/${driverId}/results.json`);
-		
-		Caxios.get(dataUrl)
-		      .then(mapSchedule)
-		      .then(races => setRaces(races));
-	}, [season, driverId]);
+	const [{season}] = useAppState();
+	const races      = useRacesBySeason(season, driverId);
 	
 	if (!races) {
 		return <Skeleton variant="rectangular" height={400}/>;

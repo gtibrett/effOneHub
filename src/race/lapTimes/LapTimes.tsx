@@ -4,6 +4,7 @@ import {HeatMapSerie} from '@nivo/heatmap/dist/types/types';
 import {useMemo} from 'react';
 import ByLine from '../../drivers/ByLine';
 import {Lap, Race} from '../../types/ergast';
+import {NivoTooltip, useNivoTheme} from '../../ui-components/nivo';
 import {getTicks} from './helpers';
 import LapTooltip from './LapTooltip';
 import useLapTimeChartData, {LapChartDatum} from './useLapTimeChartData';
@@ -19,14 +20,16 @@ type ChartProps = {
 }
 
 const Chart = ({data, lapCount}: ChartProps) => {
-	const theme = useTheme();
+	const nivoTheme = useNivoTheme();
+	const theme     = useTheme();
 	
 	return useMemo(() => (
 		<ResponsiveHeatMap
+			theme={nivoTheme}
 			animate={false}
 			data={data}
 			forceSquare={true}
-			colors={({data: {color}}) => color}
+			// colors={({data: {color}}) => color}
 			enableLabels={false}
 			borderWidth={2}
 			borderColor={theme.palette.background.paper}
@@ -50,11 +53,11 @@ const Chart = ({data, lapCount}: ChartProps) => {
 					return <ByLine variant="code" id={v}/>;
 				})
 			}}
-			tooltip={LapTooltip}
+			tooltip={NivoTooltip(LapTooltip)}
 			hoverTarget="cell"
 			layers={['cells', 'axes']}
 		/>
-	), [data, theme, lapCount]);
+	), [data, theme, nivoTheme, lapCount]);
 };
 
 function LapTimes({laps, results}: LapTimesProps) {

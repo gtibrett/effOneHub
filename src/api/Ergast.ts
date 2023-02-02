@@ -5,8 +5,9 @@ export const getCanonicalId = (summary: DriverT | Constructor | undefined) => {
 	if (!summary) {
 		return undefined;
 	}
-	const urlParts = (summary.url || '').split('/');
-	return urlParts.pop() || undefined;
+	const urlParts    = (summary.url || '').split('/');
+	const canonicalId = urlParts.pop();
+	return canonicalId ? decodeURI(canonicalId) : undefined;
 };
 
 export function getAPIUrl(path: string) {

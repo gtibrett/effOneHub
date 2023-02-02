@@ -1,7 +1,7 @@
 import {alpha, FormControl, MenuItem, Select, useTheme} from '@mui/material';
 import axios from 'axios';
 import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router';
+import {useLocation, useNavigate} from 'react-router';
 import {getAPIUrl} from '../api/Ergast';
 import {useAppState} from '../app/AppStateProvider';
 import {Responses} from '../types/ergast';
@@ -13,15 +13,14 @@ const useSelectSx = () => {
 		m: 0,
 		minWidth: 120,
 		borderRadius: 1,
-		backgroundColor: alpha(theme.palette.common.white, 0.25),
-		border: `1px solid ${alpha(theme.palette.common.white, .5)}`,
+		border: `1px solid ${theme.palette.text.primary}`,
 		'&:hover': {
-			backgroundColor: alpha(theme.palette.common.white, 0.3)
+			backgroundColor: alpha(theme.palette.divider, 0.05)
 		},
 		
 		// arrow icon
 		'& > .MuiInputBase-root > .MuiSvgIcon-root': {
-			color: theme.palette.common.white
+			// color: theme.palette.common.white
 		},
 		
 		'& > .MuiInputBase-root > .MuiOutlinedInput-notchedOutline': {
@@ -31,17 +30,20 @@ const useSelectSx = () => {
 };
 
 export default function SeasonMenu() {
+	const {pathname}            = useLocation();
 	const navigate              = useNavigate();
 	const sx                    = useSelectSx();
 	const [{season}, setState]  = useAppState();
 	const [seasons, setSeasons] = useState<number[]>([]);
 	
-	const setSeason = (season: number) => {
-		setState({
-			season
-		});
+	const setSeason = (value: number) => {
+		if (pathname.includes(`/${season}`)) {
+			navigate(pathname.replace(`/${season}`, `/${value}`));
+		}
 		
-		navigate('/');
+		setState({
+			season: value
+		});
 	};
 	
 	useEffect(() => {

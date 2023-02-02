@@ -2,7 +2,6 @@ import {faFlagCheckered} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {AppBar, Grid, Hidden, SxProps, Toolbar, Tooltip, Typography, useTheme} from '@mui/material';
 import {useLocation} from 'react-router';
-import SeasonMenu from '../schedule/SeasonMenu';
 import Link from './Link';
 
 export default function Header() {
@@ -23,9 +22,11 @@ export default function Header() {
 		}
 	};
 	
+	const background = theme.palette.mode === 'dark' ? theme.palette.background.paper : theme.palette.primary.dark;
+	
 	return (
 		<header>
-			<AppBar component="nav" color="primary" sx={{background: theme.palette.primary.dark}}>
+			<AppBar component="nav" color="primary" sx={{background}}>
 				<Toolbar>
 					<Grid container spacing={2} alignItems="center">
 						<Hidden mdUp>
@@ -46,7 +47,6 @@ export default function Header() {
 						</Hidden>
 						<Grid item xs/>
 						<Grid item><Link color="inherit" to="/about" sx={navLinkSx} className={pathname === '/about' ? 'active' : ''}>About</Link></Grid>
-						<Grid item><SeasonMenu/></Grid>
 					</Grid>
 				</Toolbar>
 			</AppBar>

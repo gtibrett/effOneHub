@@ -64,6 +64,7 @@ export const useDriver = (id: DriverId) => {
 								      ...cur,
 								      [id]: {
 									      ...driver,
+									      url: decodeURI(driver.url || ''),
 									      canonicalId,
 									      bio
 								      }

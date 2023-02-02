@@ -1,4 +1,4 @@
-import {Grid, Typography} from '@mui/material';
+import {Grid, Hidden, Typography} from '@mui/material';
 import Flag, {FlagProps} from '../flags/Flag';
 import Link from '../ui-components/Link';
 import DriverAvatar, {DriverAvatarProps} from './DriverAvatar';
@@ -31,9 +31,9 @@ export default function ByLine({id, variant = 'full', avatarProps = {}, flagProp
 		case 'full':
 			return (
 				<Grid container spacing={1} alignItems="center" sx={{flexWrap: 'nowrap'}}>
-					<Grid item><DriverAvatar id={id} {...avatarProps}/></Grid>
+					<Hidden smDown><Grid item><DriverAvatar id={id} {...avatarProps}/></Grid></Hidden>
 					<Grid item><Typography><Link to={`/driver/${driverId}`}>{name}</Link></Typography></Grid>
-					<Grid item><Typography><Flag nationality={nationality} {...flagProps}/></Typography></Grid>
+					<Hidden mdDown><Grid item><Typography><Flag nationality={nationality} {...flagProps}/></Typography></Grid></Hidden>
 				</Grid>
 			);
 	}

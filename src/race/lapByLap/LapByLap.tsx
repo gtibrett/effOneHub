@@ -2,6 +2,7 @@ import {Box, Skeleton} from '@mui/material';
 import {ResponsiveBump} from '@nivo/bump';
 import ByLine from '../../drivers/ByLine';
 import {Lap, Race} from '../../types/ergast';
+import {NivoTooltip, useNivoTheme} from '../../ui-components/nivo';
 import LapByLapTooltip from './LapByLapTooltip';
 import useLapByLapChartData from './useLapByLapChartData';
 
@@ -33,12 +34,14 @@ const getTicks = (laps: number) => {
 };
 
 function LapByLap({laps, results}: LapByLapProps) {
-	const data = useLapByLapChartData(laps, results);
+	const nivoTheme = useNivoTheme();
+	const data      = useLapByLapChartData(laps, results);
 	
 	let content = <Skeleton variant="rectangular" sx={{width: '100%'}} height="100%"/>;
 	if (laps.length) {
 		content = (
 			<ResponsiveBump
+				theme={nivoTheme}
 				data={data}
 				colors={({color}) => color || 'transparent'}
 				lineWidth={3}
@@ -69,7 +72,7 @@ function LapByLap({laps, results}: LapByLapProps) {
 					tickRotation: 0
 				}}
 				margin={{top: 0, right: 24, bottom: 24, left: 40}}
-				tooltip={LapByLapTooltip}
+				tooltip={NivoTooltip(LapByLapTooltip)}
 			/>
 		);
 	}

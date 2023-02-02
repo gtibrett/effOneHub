@@ -3,6 +3,7 @@ import {ResponsiveGeoMap} from '@nivo/geo';
 import {useMemo} from 'react';
 import {feature} from 'topojson-client';
 import {Circuit, Location} from '../types/ergast';
+import {useNivoTheme} from '../ui-components/nivo';
 
 const useLand = () => {
 	const land = require('world-atlas/land-110m.json');
@@ -26,8 +27,9 @@ type CircuitMapProps = {
 }
 
 export default function CircuitMap({circuits, height = 300, width = 'auto', centerOn = {long: '0', lat: '0'}, zoom = false}: CircuitMapProps) {
-	const theme = useTheme();
-	const land  = useLand();
+	const nivoTheme = useNivoTheme();
+	const theme     = useTheme();
+	const land      = useLand();
 	
 	if (!circuits) {
 		return null;
@@ -51,6 +53,7 @@ export default function CircuitMap({circuits, height = 300, width = 'auto', cent
 	return (
 		<Box sx={{height, width}} aria-hidden>
 			<ResponsiveGeoMap
+				theme={nivoTheme}
 				features={[land, ...points]}
 				margin={{top: 0, right: 0, bottom: 0, left: 0}}
 				projectionType="equirectangular"
